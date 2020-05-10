@@ -42,7 +42,10 @@ if __name__ == '__main__':
     ns = args.ns * 1000
     we = args.we * 1000
     experiment_time = str(datetime.now()).split('.')[0]
-    out_csv = None
+    out_csv = 'outputs/single-intersection/{}_alpha{}_gamma{}_eps{}_decay{}_reward{}'.format(experiment_time,
+                                                                                                args.alpha, args.gamma,
+                                                                                                args.epsilon,
+                                                                                                args.decay, args.reward)
 
     env = SumoEnvironment(net_file='roadnets/single-intersection.net.xml',
                           route_file=args.route,
