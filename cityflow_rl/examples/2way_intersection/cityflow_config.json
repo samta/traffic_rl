@@ -1,0 +1,11 @@
+{
+"interval": 1.0,
+"seed": 0,
+"dir": "examples/2way_intersection/",
+"roadnetFile": "roadnet.json",
+"flowFile": "flow.json",
+"rlTrafficLight": true,
+"saveReplay": true,
+"roadnetLogFile": "examples/2way_intersection/roadnetlog.json",
+"replayLogFile": "examples/2way_intersection/replay.txt"
+}
