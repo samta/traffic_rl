@@ -31,9 +31,9 @@ Total waiting time for all the vehicles on the traffic signal
 ##### Action:- 
 which phase should be set green next
 
-single intersection, single road-single lane - phase - 0, 1 (action - 0/1)
-single intersection, two road - single lane - phase 0,1,2,3 (action - 0/1/2/3)
-single intersection, two road - double lane - phase 0,1,2,3,4,5,6,7 (action - 0/1/2/3/4/5/6/7)
+- single intersection, single road-single lane - phase - 0, 1 (action - 0/1)
+- single intersection, two road - single lane - phase 0,1,2,3 (action - 0/1/2/3)
+- single intersection, two road - double lane - phase 0,1,2,3,4,5,6,7 (action - 0/1/2/3/4/5/6/7)
 
 Questions - what should be good state space, reward structure?
 
