@@ -1,7 +1,6 @@
 import numpy as np
 
 class EpsilonGreedy:
-
     def __init__(self, initial_epsilon=1.0, min_epsilon=0.0, decay=0.99):
         self.initial_epsilon = initial_epsilon
         self.epsilon = initial_epsilon
@@ -10,14 +9,11 @@ class EpsilonGreedy:
 
     def choose(self, q_table, state, action_space):
         if np.random.rand() < self.epsilon:
-            print('explore')
             action = int(action_space.sample())
         else:
-            print('exploit')
             action = np.argmax(q_table[state])
 
         self.epsilon = max(self.epsilon*self.decay, self.min_epsilon)
-        #print(self.epsilon)
         return action
 
     def reset(self):
