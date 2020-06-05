@@ -31,7 +31,7 @@ class TrafficSignal:
 
         #logic = traci.trafficlight.Logic("new-program", 0, 0, 0, phases)
 
-        logic = traci.trafficlight.Logic("new-program", 0, 0, phases)
+        logic = traci.trafficlight.Logic("new-program", 0, 0, phases=phases)
 
         traci.trafficlight.setCompleteRedYellowGreenDefinition(self.id, logic)
 
@@ -50,6 +50,8 @@ class TrafficSignal:
         else:
             self.time_on_phase = self.delta_time
             self.green_phase = new_phase
+            #print ('self.id', self.id)
+            #print ('self.phase', self.phase)
             traci.trafficlight.setPhase(self.id, self.phase + 1)  # turns yellow
 
     def update_phase(self):

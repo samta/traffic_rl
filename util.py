@@ -105,3 +105,13 @@ def plot(csv_file, result_file):
 
     plt.savefig(result_file, bbox_inches="tight")
     #plt.show()
+
+
+def save_csv_1(metric):
+    import time
+    df = pd.DataFrame(metric)
+    out_filename = "output"
+    df.to_csv(out_filename + '.csv' + str(time.time()), index=False)
+    df.plot(kind='line', x='step_time', y='total_wait_time')
+    plt.show()
+    plt.savefig(out_filename + '.jpg')

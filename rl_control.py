@@ -13,7 +13,7 @@ from sumo_env import SumoEnvironment
 from agent import Agent
 from epsilon_greedy import EpsilonGreedy
 from configparser import SafeConfigParser
-from util import save_csv, plot
+from util import save_csv, plot, save_csv_1
 
 if __name__ == '__main__':
 
@@ -24,26 +24,32 @@ if __name__ == '__main__':
 
     # define output csv file
     experiment_time = str(datetime.now()).split('.')[0]
-    out_csv = 'outputs/{}_alpha{}_gamma{}_eps{}_decay{}'.format(experiment_time,
-                                                                         rl_params.get('DEFAULT', 'alpha'),
-                                                                         rl_params.get('DEFAULT', 'gamma'),
-                                                                         rl_params.get('DEFAULT', 'epsilon'),
-                                                                         rl_params.get('DEFAULT', 'decay'),
-                                                                         )
+    out_csv = 'outputs/{}'.format(experiment_time)
     result = 'outputs/result'
     # init sumo environment
+
+    signal_type = rl_params.get('DEFAULT', 'signal')
+
+    if signal_type == 'one_way':
+        signal_phase = [traci.trafficlight.Phase(42, "GGrr"),  # north-south
+                  traci.trafficlight.Phase(2, "yyrr"),
+                  traci.trafficlight.Phase(42, "rrGG"),  # west-east
+                  traci.trafficlight.Phase(2, "rryy")
+                 ]
+    elif signal_type == "two_way":
+        signal_phase = [traci.trafficlight.Phase(32, "GGrrrrGGrrrr"),
+                    traci.trafficlight.Phase(2, "yyrrrryyrrrr"),
+                    traci.trafficlight.Phase(32, "rrGrrrrrGrrr"),
+                    traci.trafficlight.Phase(2, "rryrrrrryrrr"),
+                    traci.trafficlight.Phase(32, "rrrGGrrrrGGr"),
+                    traci.trafficlight.Phase(2, "rrryyrrrryyr"),
+                    traci.trafficlight.Phase(32, "rrrrrGrrrrrG"),
+                    traci.trafficlight.Phase(2, "rrrrryrrrrry")
+                 ]
+
     rl_env = SumoEnvironment(rl_params,
                              out_csv_name=out_csv,
-                             phases=[
-                                 traci.trafficlight.Phase(32, "GGrrrrGGrrrr"),
-                                 traci.trafficlight.Phase(2, "yyrrrryyrrrr"),
-                                 traci.trafficlight.Phase(32, "rrGrrrrrGrrr"),
-                                 traci.trafficlight.Phase(2, "rryrrrrryrrr"),
-                                 traci.trafficlight.Phase(32, "rrrGGrrrrGGr"),
-                                 traci.trafficlight.Phase(2, "rrryyrrrryyr"),
-                                 traci.trafficlight.Phase(32, "rrrrrGrrrrrG"),
-                                 traci.trafficlight.Phase(2, "rrrrryrrrrry")
-                             ])
+                             phases=signal_phase)
 
     # initialize the states
     initial_states = rl_env.reset()
@@ -77,5 +83,6 @@ if __name__ == '__main__':
     save_csv(rl_env.metrics, out_csv)
     # plot the metrics
     plot(out_csv, result)
+    #save_csv_1(rl_env.metrics)
     rl_env.close()
 

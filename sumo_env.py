@@ -38,7 +38,7 @@ class SumoEnvironment(MultiAgentEnv):
         self.phases = phases
         self.num_green_phases = len(phases) // 2  # Number of green phases == number of phases (green+yellow) divided by 2
         self.last_measure = 0.0  # used to reward function remember last measure
-        self.time_to_load_vehicles = 0  # number of simulation seconds ran in reset() before learning starts
+        self.time_to_load_vehicles = 120  # number of simulation seconds ran in reset() before learning starts
         self.delta_time = 5  # seconds on sumo at each step
         self.max_depart_delay = 0  # Max wait time to insert a vehicle
         self.min_green = int(params.get('DEFAULT', 'minimum_green_time'))
@@ -79,7 +79,8 @@ class SumoEnvironment(MultiAgentEnv):
                      '-n', self.net,
                      '-r', self.route,
                      '--max-depart-delay', str(self.max_depart_delay), 
-                     '--waiting-time-memory', '10000', 
+                     '--waiting-time-memory', '10000',
+                     '--time-to-teleport', str(-1),
                      '--random']
         traci.start(sumo_cmd)
 
@@ -150,4 +151,30 @@ class SumoEnvironment(MultiAgentEnv):
 
     def close(self):
         traci.close()
+
+    def sim(self, phase):
+        time_on_phase = 0.0
+        max_green = 50
+        #print ('curr phase', phase)
+        traci.trafficlight.setPhase('t', phase)  # turns yellow
+        #self.traffic_signals.set_next_phase(phase)
+        while time_on_phase <= max_green:
+            #print ('self.traffic_signals.time_on_phase', time_on_phase)
+            #print ('apply step')
+            self.sumo_step()
+            time_on_phase += 1
+
+        self.last_measure = sum(self.traffic_signals.get_waiting_time())
+        m = self.compute_step_info()
+        #print ('step info', m)
+        self.metrics.append(m)
+
+        if phase == 7: return 0
+        #print ('>>traci.trafficlight.setPhase', traci.trafficlight.getPhase('t'))
+        return (phase) + 1
+
+
+
+
+
 
