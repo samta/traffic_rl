@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # define output csv file
     experiment_time = str(datetime.now()).split('.')[0]
     out_csv = 'outputs/{}-{}'.format(experiment_time,'default_ts_plan')
-    result = 'outputs/default_ts_plan'
+    result = 'outputs/fixed_ts_plan'
 
     # init sumo environment
     rl_env = SumoEnvironment(rl_params,
