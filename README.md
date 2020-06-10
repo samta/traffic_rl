@@ -13,6 +13,12 @@ python3 setup.py install
 #### Configuration
 All configuration parameter to do an rl control are present in rl.ini file. By default it uses One-way Single intersection traffic network with Q-learning agent. This file can be modified to run the required configuration
 
+Note: This code base was run and tested on Eclipse SUMO Version 1.5.0
+Build features: Darwin-18.5.0 x86_64 Clang 10.0.1.10010046 Release Proj GUI
+
+By default the UI feature is kept off. 
+To simulate the results with UI (to see the traffic on UI), please edit rl.ini to use_gui = Yes.
+
 #### Run
 For RL based traffic light control,
 ```
