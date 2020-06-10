@@ -29,11 +29,12 @@ class TrafficSignal:
         self.edges_capacity = self._compute_edges_capacity()
         self.vehicles = {}
 
-        logic = traci.trafficlight.Logic("new-program", 0, 0, 0, phases)
-        #logic = traci.trafficlight.Logic("new-program", 0, 0, phases=phases)
+        #logic = traci.trafficlight.Logic("new-program", 0, 0, 0, phases)
+        logic = traci.trafficlight.Logic("new-program", 0, 0, phases=phases)
 
         traci.trafficlight.setCompleteRedYellowGreenDefinition(self.id, logic)
 
+    @property
     def phase(self):
         """
         Returns current phase of the traffic light

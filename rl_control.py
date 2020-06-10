@@ -34,20 +34,20 @@ if __name__ == '__main__':
 
     #Get the signal phases for the traffic network
     if signal_type == 'one_way':
-        signal_phase = [traci.trafficlight.Phase(42000,-1,1, "GGrr"), 
-                        traci.trafficlight.Phase(2000,-1,1, "yyrr"),
-                        traci.trafficlight.Phase(42000,-1,1, "rrGG"),         
-                        traci.trafficlight.Phase(2000,-1,1, "rryy")]
+        signal_phase = [traci.trafficlight.Phase(42,"GGrr"),
+                        traci.trafficlight.Phase(2,"yyrr"),
+                        traci.trafficlight.Phase(42,"rrGG"),
+                        traci.trafficlight.Phase(2,"rryy")]
         
     elif signal_type == 'two_way':
-        signal_phase = [traci.trafficlight.Phase(32000,-1,1, "GGrrrrGGrrrr"),
-                        traci.trafficlight.Phase(2000,-1,1, "yyrrrryyrrrr"),
-                        traci.trafficlight.Phase(32000,-1,1, "rrGrrrrrGrrr"),
-                        traci.trafficlight.Phase(2000,-1,1, "rryrrrrryrrr"),
-                        traci.trafficlight.Phase(32000,-1,1, "rrrGGrrrrGGr"),
-                        traci.trafficlight.Phase(2000,-1,1, "rrryyrrrryyr"),
-                        traci.trafficlight.Phase(32000,-1,1, "rrrrrGrrrrrG"),
-                        traci.trafficlight.Phase(2000,-1,1, "rrrrryrrrrry")]
+        signal_phase = [traci.trafficlight.Phase(32,"GGrrrrGGrrrr"),
+                        traci.trafficlight.Phase(2,"yyrrrryyrrrr"),
+                        traci.trafficlight.Phase(32,"rrGrrrrrGrrr"),
+                        traci.trafficlight.Phase(2,"rryrrrrryrrr"),
+                        traci.trafficlight.Phase(32,"rrrGGrrrrGGr"),
+                        traci.trafficlight.Phase(2,"rrryyrrrryyr"),
+                        traci.trafficlight.Phase(32,"rrrrrGrrrrrG"),
+                        traci.trafficlight.Phase(2,"rrrrryrrrrry")]
 
     #Initialize SUMO traffic simulation environment and get initial states
     rl_env = SumoEnvironment(rl_params,

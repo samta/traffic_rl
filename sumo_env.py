@@ -94,8 +94,8 @@ class SumoEnvironment(MultiAgentEnv):
         """
         Return current simulation second on SUMO
         """
-        return traci.simulation.getCurrentTime()//1000  # milliseconds to seconds
-        #return traci.simulation.getTime()  # simulation time in seconds
+        #return traci.simulation.getCurrentTime()//1000  # milliseconds to seconds
+        return traci.simulation.getTime()  # simulation time in seconds
 
     def step(self, actions):
         """
@@ -122,6 +122,14 @@ class SumoEnvironment(MultiAgentEnv):
         """
         Return the observations for current state of traffic environment
         """
+
+        @property
+        def phase(self):
+            """
+            Returns current phase of the traffic light
+            """
+            return traci.trafficlight.getPhase(self.id)
+
         phase_id = [1 if self.traffic_signals.phase//2 == i else 0 for i in range(self.num_green_phases)]
         elapsed = self.traffic_signals.time_on_phase / self.max_green
         density = self.traffic_signals.get_lanes_density()
