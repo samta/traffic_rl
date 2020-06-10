@@ -1,6 +1,5 @@
 from setuptools import setup
 
-#REQUIRED = ['gym', 'numpy', 'pandas', 'matplotlib', 'ray[rllib]']
 REQUIRED = ['gym', 'numpy', 'pandas', 'matplotlib']
 
 setup(

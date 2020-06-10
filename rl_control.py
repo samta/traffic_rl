@@ -13,7 +13,7 @@ from sumo_env import SumoEnvironment
 from agent import Agent
 from epsilon_greedy import EpsilonGreedy
 from configparser import SafeConfigParser
-from util import save_csv, plot, save_csv_1
+from util import save_csv, plot
 
 if __name__ == '__main__':
 
@@ -24,39 +24,39 @@ if __name__ == '__main__':
 
     # define output csv file
     experiment_time = str(datetime.now()).split('.')[0]
-    out_csv = 'outputs/{}'.format(experiment_time)
-    result = 'outputs/result'
-    # init sumo environment
+    out_csv = 'outputs/{}_{}_{}Agent'.format(experiment_time,
+                                                                         rl_params.get('DEFAULT', 'signal'),
+                                                                         rl_params.get('DEFAULT', 'rl_agent')
+                                                                         )
 
+    # init sumo environment
     signal_type = rl_params.get('DEFAULT', 'signal')
 
+    #Get the signal phases for the traffic network
     if signal_type == 'one_way':
-        signal_phase = [traci.trafficlight.Phase(42, "GGrr"),  # north-south
-                  traci.trafficlight.Phase(2, "yyrr"),
-                  traci.trafficlight.Phase(42, "rrGG"),  # west-east
-                  traci.trafficlight.Phase(2, "rryy")
-                 ]
-    elif signal_type == "two_way":
-        signal_phase = [traci.trafficlight.Phase(32, "GGrrrrGGrrrr"),
-                    traci.trafficlight.Phase(2, "yyrrrryyrrrr"),
-                    traci.trafficlight.Phase(32, "rrGrrrrrGrrr"),
-                    traci.trafficlight.Phase(2, "rryrrrrryrrr"),
-                    traci.trafficlight.Phase(32, "rrrGGrrrrGGr"),
-                    traci.trafficlight.Phase(2, "rrryyrrrryyr"),
-                    traci.trafficlight.Phase(32, "rrrrrGrrrrrG"),
-                    traci.trafficlight.Phase(2, "rrrrryrrrrry")
-                 ]
+        signal_phase = [traci.trafficlight.Phase(42000,-1,1, "GGrr"), 
+                        traci.trafficlight.Phase(2000,-1,1, "yyrr"),
+                        traci.trafficlight.Phase(42000,-1,1, "rrGG"),         
+                        traci.trafficlight.Phase(2000,-1,1, "rryy")]
+        
+    elif signal_type == 'two_way':
+        signal_phase = [traci.trafficlight.Phase(32000,-1,1, "GGrrrrGGrrrr"),
+                        traci.trafficlight.Phase(2000,-1,1, "yyrrrryyrrrr"),
+                        traci.trafficlight.Phase(32000,-1,1, "rrGrrrrrGrrr"),
+                        traci.trafficlight.Phase(2000,-1,1, "rryrrrrryrrr"),
+                        traci.trafficlight.Phase(32000,-1,1, "rrrGGrrrrGGr"),
+                        traci.trafficlight.Phase(2000,-1,1, "rrryyrrrryyr"),
+                        traci.trafficlight.Phase(32000,-1,1, "rrrrrGrrrrrG"),
+                        traci.trafficlight.Phase(2000,-1,1, "rrrrryrrrrry")]
 
+    #Initialize SUMO traffic simulation environment and get initial states
     rl_env = SumoEnvironment(rl_params,
                              out_csv_name=out_csv,
                              phases=signal_phase)
+    initial_states = rl_env.sumo_init()
 
-    # initialize the states
-    initial_states = rl_env.reset()
-
-    # initialize the agent
+    #Initialize the RL agent
     rl_agent = rl_params.get('DEFAULT', 'rl_agent')
-
     agent = Agent(starting_state=rl_env.encode_states(initial_states),
                              action_space=rl_env.action_space,
                              alpha=float(rl_params.get('DEFAULT', 'alpha')),
@@ -65,24 +65,28 @@ if __name__ == '__main__':
                                                                 min_epsilon=float(rl_params.get('DEFAULT', 'minimum_epsilon')),
                                                                 decay=float(rl_params.get('DEFAULT', 'decay')))
                     )
-    step = 0 # initialize simulations step
+    
+    #Start simulation
+    step = 0 
     while step < simulation_step:
-        # take a step
+        # Take a step
         action = agent.act(step)
         step += 1
-        # compute next_state and reward
+        # Compute next_state and reward
         next_state, reward = rl_env.step(actions=action)
         if rl_agent == 'ql':
             # Apply Q-Learning
             agent.learn_q(new_state=rl_env.encode_states(next_state), reward=reward)
-            # Apply sarsa learnign
         elif rl_agent == 'sarsa':
+            # Apply sarsa learning
             agent.learn_sarsa(new_state=rl_env.encode_states(next_state), reward=reward)
+        elif rl_agent == 'dql':
+            # Apply dql learning
+            agent.learn_dql(new_state=rl_env.encode_states(next_state), reward=reward)
 
-    # save the metrics, step count and total wait time
+    # Save and plot the traffic metrics:(step count, stopped vehicles, total wait time)
     save_csv(rl_env.metrics, out_csv)
-    # plot the metrics
-    plot(out_csv, result)
-    #save_csv_1(rl_env.metrics)
+    plot(out_csv)
+    
     rl_env.close()
 

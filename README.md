@@ -1,41 +1,56 @@
-# Trffic signal control using Q-Leaning
+# Traffic signal control using RL Agent
 #### Setup
-install sumo sumo-tools sumo-doc
-
+```
+sudo apt-get install sumo sumo-tools sumo-doc
 echo 'export SUMO_HOME="/usr/share/sumo"' >> ~/.bashrc
-
 source ~/.bashrc
+```
 
 #### Install
+```
 python3 setup.py install
+```
+#### Configuration
+All configuration parameter to do an rl control are present in rl.ini file. By default it uses One-way Single intersection traffic network with Q-learning agent. This file can be modified to run the required configuration
 
 #### Run
+For RL based traffic light control,
+```
 python3 rl_control.py
+```
+For cyclic fixed time traffic light control,
+```
+python3 fixed_ts_plan.py
+```
 
-#### configuration
-All configuration parameter to do an rl control is kept in rl.ini file. By default it uses single intersection one way traffic signal.
+##### Algorithm
+We have explored Q-learning, SARSA and Double Q-Learning algorithms for the agent to learn and optimize the total waiting time of vehicles in the signal.
 
-##### Algorithm:-
-We have used Q-learning algorithm for the agent to learn and optimize the waiting time for vehicles in the signal.
-```Q(St, At) = Q(St, At) + alpha*[Rt+1 + max over a (Q(St+1, a))-Q(St, At)]```
+Q-Learning Update:
+```
+Q(St, At) = Q(St, At) + alpha * [ (Rt+1) + max over a (Q(St+1, a))-Q(St, At)]
+```
 
-##### State:-
-1. Current Phase - Current phase set on traffic signal
-2. Elapsed time - Time spent on current signal
-3. Lane density - last step vehicle on lane / (lane length / vehicle size (along with min gap between vehicle) 
-4. Queue length - Last step halting/waiting vehicle on lane / (lane length / vehicle size (along with min gap between vehicle)
+SARSA Update:
+```
+Q(St, At) = Q(St, At) + alpha * [ (Rt+1) + (Q(St+1, At+1))-Q(St, At)]
+```
 
-##### Reward:-
-Total waiting time for all the vehicles on the traffic signal
+Double Q-Learning Update:
+```
+Update either of these with probability 0.5
+Q1(St, At) = Q1(St, At) + alpha * [ (Rt+1) + Q2(St+1, max over a (Q1(St+1, a)))-Q1(St, At)]
+or
+Q2(St, At) = Q2(St, At) + alpha * [ (Rt+1) + Q1(St+1, max over a (Q2(St+1, a)))-Q2(St, At)]
+```
 
-##### Action:- 
-which phase should be set green next
+##### State, Action and Rewards 
+State  : [Current Phase, Elapsed time, Lane density, Queue length]
 
-- single intersection, single road-single lane - phase - 0, 1 (action - 0/1)
-- single intersection, two road - single lane - phase 0,1,2,3 (action - 0/1/2/3)
-- single intersection, two road - double lane - phase 0,1,2,3,4,5,6,7 (action - 0/1/2/3/4/5/6/7)
+Reward : Previous waiting time - Current waiting time
 
-Questions - what should be good state space, reward structure?
+Action : Choose the next green phase
+
 
 
 

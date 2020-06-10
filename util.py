@@ -88,9 +88,9 @@ def plot_figure(figsize=(12, 9), x_label='', y_label='', title=''):
     plt.ylabel(y_label)
 
 
-def plot(csv_file, result_file):
-    csv_file = csv_file+'.csv'
-    result_file = result_file+'.pdf'
+def plot(out_file):
+    csv_file = out_file+'.csv'
+    result_file = out_file+'.png'
     plot_figure(x_label='Time Step (s)', y_label='Total Waiting Time of Vehicles (s)')
     df = pd.read_csv(csv_file)
     main_df = df
@@ -104,14 +104,3 @@ def plot(csv_file, result_file):
     plt.fill_between(steps, mean + std, mean - std, alpha=0.3)
 
     plt.savefig(result_file, bbox_inches="tight")
-    #plt.show()
-
-
-def save_csv_1(metric):
-    import time
-    df = pd.DataFrame(metric)
-    out_filename = "output"
-    df.to_csv(out_filename + '.csv' + str(time.time()), index=False)
-    df.plot(kind='line', x='step_time', y='total_wait_time')
-    plt.show()
-    plt.savefig(out_filename + '.jpg')
